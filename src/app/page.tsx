@@ -8,6 +8,7 @@ export default function Home() {
   return (
     <>
       <CanvasGrid />
+      <div className="ray-burst" aria-hidden />
       <div className="vignette" />
       <div className="scanlines" />
       <GlitchLine />

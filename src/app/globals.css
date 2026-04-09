@@ -31,6 +31,81 @@ canvas#grid {
   pointer-events: none;
 }
 
+/*
+ * Subtle radial light rays emanating from the logo mark.
+ * The element is fixed at the logo's approximate viewport position, drawn
+ * with a conic-gradient of narrow cyan bands, masked to fade into the edges,
+ * blended onto the background, and slowly rotating.
+ */
+.ray-burst {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  width: 220vmax;
+  height: 220vmax;
+  margin-left: -110vmax;
+  margin-top: -110vmax;
+  transform: translateY(-14vh);
+  transform-origin: 50% 50%;
+  pointer-events: none;
+  z-index: 3;
+  mix-blend-mode: screen;
+  opacity: 0;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    rgba(0, 176, 194, 0.22) 10deg,
+    transparent 20deg,
+    transparent 42deg,
+    rgba(0, 176, 194, 0.16) 52deg,
+    transparent 62deg,
+    transparent 86deg,
+    rgba(0, 176, 194, 0.2) 96deg,
+    transparent 106deg,
+    transparent 134deg,
+    rgba(0, 176, 194, 0.14) 144deg,
+    transparent 154deg,
+    transparent 178deg,
+    rgba(0, 176, 194, 0.24) 188deg,
+    transparent 198deg,
+    transparent 224deg,
+    rgba(0, 176, 194, 0.16) 234deg,
+    transparent 244deg,
+    transparent 272deg,
+    rgba(0, 176, 194, 0.2) 282deg,
+    transparent 292deg,
+    transparent 318deg,
+    rgba(0, 176, 194, 0.18) 328deg,
+    transparent 338deg,
+    transparent 360deg
+  );
+  -webkit-mask-image: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.55) 5%, black 18%, rgba(0,0,0,0.45) 65%, transparent 90%);
+  mask-image: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.55) 5%, black 18%, rgba(0,0,0,0.45) 65%, transparent 90%);
+  animation:
+    rayFadeIn 3s ease-out 1s forwards,
+    rayPulse 5.5s ease-in-out 4s infinite,
+    raySpin 140s linear infinite;
+}
+
+@keyframes rayFadeIn {
+  from { opacity: 0; }
+  to { opacity: 0.55; }
+}
+
+@keyframes rayPulse {
+  0%, 100% { opacity: 0.45; }
+  50%      { opacity: 1; }
+}
+
+@keyframes raySpin {
+  from { transform: translateY(-14vh) rotate(0deg); }
+  to   { transform: translateY(-14vh) rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ray-burst { animation: rayFadeIn 3s ease-out 1s forwards; }
+}
+
 .scanlines {
   position: fixed;
   inset: 0;
@@ -354,7 +429,14 @@ h1 .tld {
 }
 
 @media (max-width: 768px) {
-  main { display: none !important; }
-  #soundToggle { display: none !important; }
-  .footer-text { display: none !important; }
+  main { padding: 1.5rem 1.25rem; }
+  .logo-mark { width: 52px; height: 52px; margin-bottom: 1.5rem; }
+  .logo-mark .ring:nth-child(2) { inset: 6px; }
+  .logo-mark .ring:nth-child(3) { inset: 12px; }
+  h1 { font-size: clamp(2.2rem, 11vw, 3rem); }
+  .tagline { margin-bottom: 2rem; font-size: 0.75rem; letter-spacing: 0.24em; }
+  .status-row { margin-bottom: 2rem; }
+  .email-form { max-width: 320px; }
+  .footer-text { font-size: 0.6rem; bottom: 1.25rem; }
+  #soundToggle { top: 1rem; right: 1rem; width: 36px; height: 36px; }
 }
