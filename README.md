@@ -1,4 +1,4 @@
-# gconf.ai (Next.js)
+# ep-gconf.ai (Next.js)
 
 Next.js App Router rewrite of the original static `gconf.ai` landing page. The canvas grid, animated rings, typewriter tagline, sound toggle, and glitch line all work the same way. The newsletter form now submits to the platform API (`api.gconf.ai`).
 
