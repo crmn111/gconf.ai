@@ -9,6 +9,7 @@ import type {
 } from '@/lib/api';
 import { BlogShell } from '../BlogShell';
 import { BlogCarousel } from './BlogCarousel';
+import { BlogGallery } from './BlogGallery';
 import { BlogTweet } from './BlogTweet';
 import BlogLottie from './BlogLottie';
 
@@ -109,29 +110,7 @@ function BlockRenderer({
   if (block.type === 'gallery' && block.galleryId) {
     const photos = galleryPhotos[block.galleryId] ?? [];
     if (photos.length === 0) return null;
-    return (
-      <figure className="blog-embed blog-embed--gallery">
-        {block.title ? <figcaption>{block.title}</figcaption> : null}
-        <div className="blog-gallery">
-          {photos.map((photo) => (
-            <a
-              key={photo.id}
-              href={photo.url}
-              target="_blank"
-              rel="noreferrer"
-              className="blog-gallery-item"
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={photo.url}
-                alt={photo.alt_text || photo.filename || ''}
-                loading="lazy"
-              />
-            </a>
-          ))}
-        </div>
-      </figure>
-    );
+    return <BlogGallery photos={photos} title={block.title} />;
   }
   if (block.type === 'carousel' && block.carouselId) {
     const photos = carouselPhotos[block.carouselId] ?? [];

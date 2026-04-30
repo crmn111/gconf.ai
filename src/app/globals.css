@@ -913,9 +913,9 @@ body:has(.blog-root) {
 }
 
 .blog-article-header {
-  margin-bottom: clamp(2rem, 4vw, 3rem);
+  margin-bottom: clamp(0.75rem, 1.5vw, 1.25rem);
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  padding-bottom: clamp(1.5rem, 3vw, 2.5rem);
+  padding-bottom: clamp(1rem, 2vw, 1.5rem);
 }
 
 .blog-article-title {

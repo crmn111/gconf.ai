@@ -17,7 +17,6 @@ export async function GET() {
     '',
     '# AI content discovery',
     `LLMs-txt: ${baseUrl}/llms.txt`,
-    `LLMs-full-txt: ${baseUrl}/llms-full.txt`,
   ].join('\n');
 
   return new NextResponse(body, {

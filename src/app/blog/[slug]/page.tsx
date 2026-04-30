@@ -7,8 +7,7 @@ import {
 } from '@/lib/prefetch';
 import { SEO_DEFAULTS, absoluteUrl } from '@/lib/seo-defaults';
 import {
-  generateArticleSchema,
-  generateBreadcrumbSchema,
+  generateBlogPostingGraph,
 } from '@/lib/structured-data';
 import type { BlogContentBlock, BlogPost, GalleryPhoto } from '@/lib/api';
 import { BlogDetail } from './BlogDetail';
@@ -98,18 +97,32 @@ export default async function BlogDetailPage({ params }: Props) {
   if (!post) notFound();
   const blogPost = post as BlogPost;
 
-  const autoArticle = generateArticleSchema(blogPost, publishers, baseUrl);
+  // One combined Schema.org @graph covering Organization, WebSite, WebPage,
+  // BlogPosting, Person (author), ImageObject (featured image) and the
+  // BreadcrumbList — all cross-referenced via @id. Single <script> tag, no
+  // duplication. CMS overrides on `seo.structured_data` are merged into the
+  // BlogPosting node.
+  const baseGraph = generateBlogPostingGraph({
+    post: blogPost,
+    publishers,
+    baseUrl,
+    breadcrumb: [
+      { name: 'Home', url: baseUrl || '/' },
+      { name: 'Blog', url: `${baseUrl}/blog` },
+      { name: blogPost.title },
+    ],
+  });
   const overrides = (blogPost.seo?.structured_data || {}) as Record<string, unknown>;
-  const articleSchema =
-    autoArticle && Object.keys(overrides).length > 0
-      ? { ...autoArticle, ...overrides }
-      : autoArticle;
-
-  const breadcrumbSchema = generateBreadcrumbSchema([
-    { name: 'Home', url: baseUrl || '/' },
-    { name: 'Blog', url: `${baseUrl}/blog` },
-    { name: blogPost.title },
-  ]);
+  const blogGraph = Object.keys(overrides).length > 0
+    ? {
+        ...baseGraph,
+        '@graph': baseGraph['@graph'].map((node) =>
+          (node as { '@type'?: string })['@type'] === 'BlogPosting'
+            ? { ...node, ...overrides }
+            : node,
+        ),
+      }
+    : baseGraph;
 
   const blocks = parseContentBlocks(blogPost.content).filter(
     (b) => b.published !== false,
@@ -141,15 +154,9 @@ export default async function BlogDetailPage({ params }: Props) {
 
   return (
     <>
-      {articleSchema && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
-        />
-      )}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(blogGraph) }}
       />
       <BlogDetail
         post={blogPost}

@@ -23,12 +23,29 @@ function getCachedRequest<T>(key: string, fetcher: () => Promise<T>): Promise<T>
   return promise;
 }
 
+// One-time warning so missing env vars at build time are visible in
+// Vercel logs instead of silently returning null for every fetch.
+let envWarningIssued = false;
+function warnOnceIfEnvMissing(apiKey: string) {
+  if (envWarningIssued) return;
+  if (!EXTERNAL_API_URL || !apiKey) {
+    envWarningIssued = true;
+    console.warn(
+      `[prefetch] Missing env vars — NEXT_PUBLIC_GCONF_API_URL="${
+        EXTERNAL_API_URL ? 'set' : 'MISSING'
+      }", NEXT_PUBLIC_GCONF_API_KEY="${apiKey ? 'set' : 'MISSING'}". ` +
+        'All API fetches will return null until these are set and the site is redeployed.',
+    );
+  }
+}
+
 async function fetchFromExternalAPI(
   endpoint: string,
   options?: { cacheDuration?: number; tags?: string[]; noAuth?: boolean },
 ) {
-  if (!EXTERNAL_API_URL) return null;
   const apiKey = await getTenantApiKey();
+  warnOnceIfEnvMissing(apiKey);
+  if (!EXTERNAL_API_URL) return null;
   const cacheKey = `fetch:${apiKey}:${endpoint}`;
 
   return getCachedRequest(cacheKey, async () => {
