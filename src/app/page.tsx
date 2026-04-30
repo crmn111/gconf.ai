@@ -4,6 +4,7 @@ import { SoundToggle } from '@/components/SoundToggle';
 import { GlitchLine } from '@/components/GlitchLine';
 import { NewsletterForm } from '@/components/NewsletterForm';
 import { HomeNav } from '@/components/HomeNav';
+import { FooterBottom } from '@/components/FooterBottom';
 import { prefetchAppDetails } from '@/lib/prefetch';
 
 export default async function Home() {
@@ -62,8 +63,11 @@ export default async function Home() {
 
         <NewsletterForm />
 
-        <div className="footer-text">&copy; 2026 {appName} &mdash; classified</div>
       </main>
+
+      <footer className="home-footer">
+        <FooterBottom appName={appName} />
+      </footer>
     </>
   );
 }

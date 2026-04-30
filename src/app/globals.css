@@ -1361,18 +1361,12 @@ body:has(.blog-root) {
 .blog-footer {
   position: relative;
   z-index: 2;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
-  padding: 2.5rem 1rem 3rem;
+  display: block;
+  padding: 0 clamp(1rem, 4vw, 2rem);
   font-family: var(--font-jetbrains-mono), monospace;
-  font-size: 0.65rem;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
   color: rgba(255, 255, 255, 0.3);
-  border-top: 1px solid rgba(255, 255, 255, 0.04);
   margin-top: 4rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .blog-footer-sep {
@@ -1420,3 +1414,122 @@ body:has(.blog-root) {
   }
 }
 
+
+/* ───────────────────────────────────────────────────────────────────
+   Footer-bottom strip — ported from chm-website (without easter egg).
+   "Powered by gconf.ai" on the left + © year app-name on the right.
+   ──────────────────────────────────────────────────────────────────── */
+
+.footer-bottom-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem 0;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  /* Constrain the link rail to the content area while letting the parent
+     wrapper span full width (border, background, etc. live on the parent). */
+  max-width: 1100px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Both halves are flex rows so the icon sits vertically centred with the
+   label text (the className utilities used in the JSX assume Tailwind, which
+   isn't loaded here). */
+.powered-by-gconf,
+.copyright-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  line-height: 1;
+}
+.powered-by-gconf > svg,
+.copyright-group > svg {
+  display: block;
+  flex-shrink: 0;
+}
+.footer-bottom-text {
+  line-height: 1;
+}
+
+.footer-bottom-text {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 12px;
+  font-family: var(--font-jetbrains-mono), 'Proxima Nova Alt', monospace, sans-serif;
+}
+
+.footer-bottom-app {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+@media (max-width: 600px) {
+  .footer-bottom-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+}
+
+/* Zap icon "powered by" animation */
+@keyframes zap {
+  0% { opacity: 0.7; filter: drop-shadow(0 0 2px #00B0C2); transform: scale(1); }
+  15% { opacity: 1; filter: drop-shadow(0 0 8px #00B0C2); transform: scale(1.3); }
+  30% { opacity: 0.3; filter: drop-shadow(0 0 1px #00B0C2); transform: scale(0.85); }
+  50% { opacity: 1; filter: drop-shadow(0 0 12px #00B0C2) drop-shadow(0 0 24px #00B0C2); transform: scale(1.4); }
+  65% { opacity: 0.3; transform: scale(0.9); filter: drop-shadow(0 0 0px transparent); }
+  80% { opacity: 1; filter: drop-shadow(0 0 6px #00B0C2); transform: scale(1.15); }
+  100% { opacity: 0.7; filter: drop-shadow(0 0 2px #00B0C2); transform: scale(1); }
+}
+.animate-zap { animation: zap 1.2s ease-in-out forwards; }
+.zap-icon { transition: fill 0.3s ease; }
+.powered-by-gconf:hover .zap-icon { fill: #22C55E; }
+
+/* Copyright glyph spin/glow */
+@keyframes copyright-spin {
+  0%, 80% { transform: rotate(0deg) scale(1); filter: drop-shadow(0 0 0px transparent); }
+  83% { transform: rotate(0deg) scale(1.3); fill: #00B0C2; filter: drop-shadow(0 0 4px rgba(0,176,194,0.6)) drop-shadow(0 0 8px rgba(0,176,194,0.3)); }
+  90% { transform: rotate(180deg) scale(1.3); fill: #00B0C2; filter: drop-shadow(0 0 6px rgba(0,176,194,0.8)) drop-shadow(0 0 12px rgba(0,176,194,0.4)); }
+  97% { transform: rotate(360deg) scale(1.3); fill: #00B0C2; filter: drop-shadow(0 0 4px rgba(0,176,194,0.6)) drop-shadow(0 0 8px rgba(0,176,194,0.3)); }
+  100% { transform: rotate(360deg) scale(1); fill: #ffffff; filter: drop-shadow(0 0 0px transparent); }
+}
+.animate-copyright-glow { animation: copyright-spin 5s ease-in-out infinite; transition: fill 0.3s ease; }
+.copyright-group:hover .animate-copyright-glow { fill: #22C55E; }
+
+/* Subtle text-shine on the "powered by"/copyright label */
+@keyframes text-shine {
+  0% { background-position: 200% center; }
+  100% { background-position: -200% center; }
+}
+.footer-link-group {
+  background: linear-gradient(120deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.55) 46%, rgba(255,255,255,0.68) 50%, rgba(255,255,255,0.55) 54%, rgba(255,255,255,0.55) 100%);
+  background-size: 300% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: text-shine 10s linear infinite;
+}
+.footer-shiny-link { -webkit-text-fill-color: rgba(255,255,255,0.3); transition: -webkit-text-fill-color 0.2s ease; }
+.footer-shiny-link:hover { -webkit-text-fill-color: rgba(255,255,255,0.6); }
+
+/* Home page footer wrapper. The home screen uses overflow:hidden + a
+   fullscreen hero, so we anchor the footer to the bottom of the viewport
+   instead of pushing it out of frame. Full-width, no inner constraint. */
+.home-footer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  padding: 0 clamp(1rem, 4vw, 2rem);
+  pointer-events: none; /* let the footer NOT block the artwork */
+}
+.home-footer > * {
+  pointer-events: auto; /* but its actual children are clickable */
+  width: 100%;
+}
+.home-footer {
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}

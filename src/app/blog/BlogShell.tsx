@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { prefetchAppDetails } from '@/lib/prefetch';
+import { FooterBottom } from '@/components/FooterBottom';
 
 /**
  * Shared chrome for the blog surface: scanline + vignette background,
@@ -57,9 +58,7 @@ export async function BlogShell({ children }: { children: ReactNode }) {
       </div>
 
       <footer className="blog-footer">
-        <span>&copy; {new Date().getFullYear()} {appName}</span>
-        <span className="blog-footer-sep">·</span>
-        <span>transmitting from the frontier</span>
+        <FooterBottom appName={appName} />
       </footer>
     </div>
   );
