@@ -56,12 +56,7 @@ function PoweredByGconf() {
       </svg>
       <span className="footer-link-group footer-bottom-text">
         POWERED BY{' '}
-        <a
-          href="https://gconf.ai"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="footer-shiny-link"
-        >
+        <a href="https://gconf.ai" className="footer-shiny-link">
           <GlitchText ref={glitchRef} autoPlay={false}>GCONF.AI</GlitchText>
         </a>
       </span>
